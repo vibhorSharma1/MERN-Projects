@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Socket.IO Chat Test</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <style>
+      body {
+        font-family: Arial;
+        background-color: #0f0f0f;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      #chat-box {
+        width: 400px;
+        height: 400px;
+        background: #1a1a1a;
+        border-radius: 10px;
+        padding: 10px;
+        overflow-y: auto;
+        box-shadow: 0 0 10px #333;
+      }
+      .msg {
+        background: #3b3b98;
+        padding: 8px 12px;
+        border-radius: 8px;
+        margin: 5px 0;
+        max-width: 80%;
+      }
+      .msg.self {
+        background: #8257e6;
+        align-self: flex-end;
+        margin-left: auto;
+      }
+      #input-box {
+        display: flex;
+        margin-top: 10px;
+        gap: 10px;
+      }
+      input {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+      }
+      button {
+        background: #6c5ce7;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #8e7cf8;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>💬 Real-Time Chat</h1>
+    <div id="chat-box"></div>
+    <div id="input-box">
+      <input id="msgInput" type="text" placeholder="Type your message..." />
+      <button id="sendBtn">Send</button>
+    </div>
+
+    <script>
+      const socket = io("http://localhost:3000");
+      const chatBox = document.getElementById("chat-box");
+      const msgInput = document.getElementById("msgInput");
+      const sendBtn = document.getElementById("sendBtn");
+
+      // Unique username for testing
+      const username = "User_" + Math.floor(Math.random() * 1000);
+
+      // Listen for messages from server
+      socket.on("receiveMessage", (data) => {
+        const msg = document.createElement("div");
+        msg.classList.add("msg");
+        if (data.user === username) msg.classList.add("self");
+        msg.innerHTML = `<strong>${data.user}:</strong> ${data.message}`;
+        chatBox.appendChild(msg);
+        chatBox.scrollTop = chatBox.scrollHeight; // Auto scroll to bottom
+      });
+
+      // Send message to server
+      sendBtn.addEventListener("click", () => {
+        const message = msgInput.value.trim();
+        if (message) {
+          socket.emit("sendMessage", { user: username, message });
+          msgInput.value = "";
+        }
+      });
+
+      msgInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendBtn.click();
+      });
+    </script>
+  </body>
+</html>

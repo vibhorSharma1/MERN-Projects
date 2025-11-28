@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Special+Gothic:wght@400..700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-background-dark: #191022;
+  --color-primary: #8A2BE2;
+   --font-gothic: "Special Gothic", sans-serif;
+  --color-secondary: #00FFFF;
+}
+
+body {
+  font-family: 'Special Gothic', sans-serif;
+  
+}
